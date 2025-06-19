@@ -1,1 +1,1 @@
-# React-TaskManager
+# smart-planner
