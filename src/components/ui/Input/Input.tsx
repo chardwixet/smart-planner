@@ -3,9 +3,5 @@ interface Props {
 }
 
 export function Input({ className }: Props) {
-  return (
-    <div className={className}>
-      <input type="input" placeholder="Введите задание" />
-    </div>
-  );
+  return <input type="input" placeholder="Введите задание" />;
 }
