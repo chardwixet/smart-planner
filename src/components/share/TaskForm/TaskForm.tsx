@@ -13,9 +13,9 @@ export function TaskForm({ className }: Props) {
 
   function taskAdd(e) {
     e.preventDefault();
-
-    console.log(e.target.value);
-    dispatch(addTask(inputValue));
+    if (inputValue) {
+      dispatch(addTask(inputValue));
+    }
   }
 
   return (
