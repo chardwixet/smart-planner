@@ -23,7 +23,7 @@ const taskSlices = createSlice({
     addTask(state, action: PayloadAction<string>) {
       state.tasks.push({
         id: crypto.randomUUID(),
-        title: action.payload,
+        title: action.payload.trim(),
         status: false,
       });
 
@@ -33,7 +33,7 @@ const taskSlices = createSlice({
       const task = state.tasks.find((item) => item.id === action.payload.id);
 
       if (task) {
-        task.title = action.payload.title;
+        task.title = action.payload.title.trim();
       }
       localStorage.setItem("tasks", JSON.stringify(state.tasks));
     },

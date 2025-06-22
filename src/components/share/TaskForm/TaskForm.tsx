@@ -14,7 +14,7 @@ export function TaskForm({ className }: Props) {
   function taskAdd(e) {
     e.preventDefault();
     if (inputValue) {
-      dispatch(addTask(inputValue));
+      dispatch(addTask(inputValue.trim()));
     }
   }
 
