@@ -5,6 +5,7 @@ import { useState, type DragEvent } from "react";
 import style from "./TaskList.module.scss";
 import { moveTask, type Task } from "../../../store/slices/taskSlices";
 import type { Board } from "../../../store/slices/boardSlices";
+import { useDrag } from "react-dnd";
 
 interface Props {
   className?: string;
