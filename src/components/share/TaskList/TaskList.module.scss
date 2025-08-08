@@ -1,0 +1,31 @@
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-height: 200px;
+}
+
+.item {
+  cursor: cursor;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #1e1f20;
+  }
+
+  &.dropIndicator {
+    position: relative;
+    padding-bottom: 14px; // Место для полоски
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #00b0ff;
+      border-radius: 2px;
+    }
+  }
+}
