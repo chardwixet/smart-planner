@@ -5,6 +5,19 @@ import { useState, type DragEvent } from "react";
 import style from "./TaskList.module.scss";
 import { moveTask, type Task } from "../../../store/slices/taskSlices";
 import type { Board } from "../../../store/slices/boardSlices";
+import {
+  closestCenter,
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragStartEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 
 interface Props {
   className?: string;
@@ -19,6 +32,8 @@ export function TaskList({ tasks, board }: Props) {
   const [filterStatus, setFilterStatus] = useState<Status>(
     status ? JSON.parse(status) : "ALL"
   );
+
+  const [activeTask, setActiveTask] = useState<Task | null>(null);
 
   const dispatch = useDispatch();
 
@@ -40,22 +55,52 @@ export function TaskList({ tasks, board }: Props) {
     localStorage.setItem("filterStatus", JSON.stringify(status));
   }
 
-  function dragStartHandler(e: DragEvent<HTMLLIElement>, id: string): void {
-    console.log("записал этот id в current", id);
-    e.dataTransfer.setData("text/plain", id); // Сохраняем id перетаскиваемого элемента
-    e.dataTransfer.effectAllowed = "move";
+  const sensors = useSensors(useSensor(PointerSensor));
 
-    const target = e.currentTarget;
+  const handleDragStart = (event: DragStartEvent) => {
+    const { active } = event;
+    const task = filteredTasks.find((t) => t.id === active.id);
+    if (task) setActiveTask(task);
+  };
 
-    target.classList.add(style.dragging);
-  }
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) {
+      setActiveTask(null);
+      return;
+    }
 
-  function dragEndHandler(e): void {
-    document.querySelectorAll(`.${style.item}`).forEach((el) => {
-      el.classList.remove(style.dropIndicator);
-    });
-    e.currentTarget.classList.remove(style.dragging);
-  }
+    const oldIndex = filteredTasks.findIndex((t) => t.id === active.id);
+    const newIndex = filteredTasks.findIndex((t) => t.id === over.id);
+
+    // Обновляем порядок в Redux
+    dispatch(
+      moveTask({
+        currentId: active.id as string,
+        dropId: over.id as string,
+        idBoard: board.id,
+      })
+    );
+
+    setActiveTask(null);
+  };
+
+  // function dragStartHandler(e: DragEvent<HTMLLIElement>, id: string): void {
+  //   console.log("записал этот id в current", id);
+  //   e.dataTransfer.setData("text/plain", id); // Сохраняем id перетаскиваемого элемента
+  //   e.dataTransfer.effectAllowed = "move";
+
+  //   const target = e.currentTarget;
+
+  //   target.classList.add(style.dragging);
+  // }
+
+  // function dragEndHandler(e): void {
+  //   document.querySelectorAll(`.${style.item}`).forEach((el) => {
+  //     el.classList.remove(style.dropIndicator);
+  //   });
+  //   e.currentTarget.classList.remove(style.dragging);
+  // }
 
   function dragOverHandler(e): void {
     e.preventDefault();
@@ -88,30 +133,42 @@ export function TaskList({ tasks, board }: Props) {
         <button onClick={() => setStatus("COMPLETED")}>Completed</button>
         <button onClick={() => setStatus("NOT_COMPLETED")}>NotCompleted</button>
       </div>
-      <ul className={style.list}>
-        {filteredTasks.length ? (
-          filteredTasks.map((task) => (
-            <li
-              draggable
-              onDragStart={(e) => dragStartHandler(e, task.id)}
-              onDragLeave={(e) => dragEndHandler(e)}
-              onDragEnd={(e) => dragEndHandler(e)}
-              onDragOver={(e) => dragOverHandler(e)}
-              onDrop={(e) => dropHandler(e, board.id, task.id)}
-              key={task.id}
-              className={style.item}
-            >
-              <TaskItem task={task} />
-            </li>
-          ))
-        ) : (
-          <li
-            onDragOver={(e) => dragOverHandler(e)}
-            onDrop={(e) => dropHandler(e, board.id, "")}
-            className={style.item}
-          ></li>
-        )}
-      </ul>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext
+          items={filteredTasks.map((t) => t.id)}
+          strategy={verticalListSortingStrategy}
+        >
+          <ul className={style.list}>
+            {filteredTasks.length ? (
+              filteredTasks.map((task) => (
+                <li
+                  // draggable
+                  // onDragStart={(e) => dragStartHandler(e, task.id)}
+                  // onDragLeave={(e) => dragEndHandler(e)}
+                  // onDragEnd={(e) => dragEndHandler(e)}
+                  // onDragOver={(e) => dragOverHandler(e)}
+                  // onDrop={(e) => dropHandler(e, board.id, task.id)}
+                  key={task.id}
+                  className={style.item}
+                >
+                  <TaskItem task={task} />
+                </li>
+              ))
+            ) : (
+              <li
+                onDragOver={(e) => dragOverHandler(e)}
+                onDrop={(e) => dropHandler(e, board.id, "")}
+                className={style.item}
+              ></li>
+            )}
+          </ul>
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }

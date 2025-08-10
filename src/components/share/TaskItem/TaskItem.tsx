@@ -5,9 +5,10 @@ import {
   removeTask,
   type Task,
 } from "../../../store/slices/taskSlices";
-
 import styles from "./TaskItem.module.scss";
 import { useEffect, useRef, useState } from "react";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface Props {
   task: Task;
@@ -25,8 +26,32 @@ export function TaskItem({ task }: Props) {
     }
   }, [isEditing]);
 
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({
+    id: task.id,
+  });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    cursor: isDragging ? "grabbing" : "grab",
+  };
+
   return (
-    <div className={styles.task}>
+    <div
+      className={styles.task}
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+    >
       <input
         type="checkbox"
         defaultChecked={task.status}

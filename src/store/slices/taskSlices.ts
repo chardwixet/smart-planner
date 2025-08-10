@@ -69,6 +69,7 @@ const taskSlices = createSlice({
 
       if (dropId !== -1) {
         const adjustedDropIndex = currentId < dropId ? dropId - 1 : dropId;
+        console.log(currentId, adjustedDropIndex);
 
         if (task) {
           state.tasks.splice(adjustedDropIndex + 1, 0, task);
