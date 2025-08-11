@@ -7,7 +7,9 @@ import {
   defaultDropAnimation,
   DndContext,
   DragOverlay,
+  MouseSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -26,17 +28,21 @@ export function TasksBoardList({}: Props) {
   const boards = useSelector((state: RootState) => state.boards).lists;
   const tasks = useSelector((state: RootState) => state.tasks).tasks;
   const dispatch = useDispatch();
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 10, // минимальное расстояние в пикселях перед началом drag
-        delay: 500,
-      },
-    })
-  );
+
+  const mouseSensor = useSensor(MouseSensor, {
+    activationConstraint: { distance: 2 },
+  });
+
+  const touchSensor = useSensor(TouchSensor, {
+    activationConstraint: {
+      delay: 250,
+      tolerance: 5,
+    },
+  });
+
+  const sensors = useSensors(mouseSensor, touchSensor);
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [{ x: clientX, y: clientY }, setCoords] = useState({ x: 0, y: 0 });
 
   function findValueOfItems(id: UniqueIdentifier | undefined, type: string) {
     if (type === "board") {
@@ -100,6 +106,10 @@ export function TasksBoardList({}: Props) {
     );
   };
 
+  useEffect(() => {
+    console.log(screenX);
+  }, [screenX]);
+
   return (
     <DndContext
       sensors={sensors}
@@ -123,8 +133,8 @@ export function TasksBoardList({}: Props) {
           <div
             style={{
               position: "fixed",
-              left: `${clientX}px`, // 15px правее курсора
-              top: `${clientY}px`,
+              left: `${10}px`, // 15px правее курсора
+              top: `${10}px`,
               transform: "none", // Отключаем стандартные трансформации
               cursor: "grabbing",
               zIndex: 9999,
