@@ -4,6 +4,7 @@ import { TasksBoard } from "../TasksBoard";
 import style from "./TasksBoardList.module.scss";
 import {
   closestCorners,
+  defaultDropAnimation,
   DndContext,
   DragOverlay,
   PointerSensor,
@@ -15,7 +16,7 @@ import {
   type UniqueIdentifier,
 } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { moveTask, type Task } from "../../../store/slices/taskSlices";
 import { TaskItem } from "../TaskItem";
 
@@ -25,9 +26,17 @@ export function TasksBoardList({}: Props) {
   const boards = useSelector((state: RootState) => state.boards).lists;
   const tasks = useSelector((state: RootState) => state.tasks).tasks;
   const dispatch = useDispatch();
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 10, // минимальное расстояние в пикселях перед началом drag
+        delay: 500,
+      },
+    })
+  );
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [{ x: clientX, y: clientY }, setCoords] = useState({ x: 0, y: 0 });
 
   function findValueOfItems(id: UniqueIdentifier | undefined, type: string) {
     if (type === "board") {
@@ -109,9 +118,26 @@ export function TasksBoardList({}: Props) {
         </ul>
       </SortableContext>
 
-      {/* <DragOverlay>
-        {activeTask ? <TaskItem task={activeTask} /> : null}
-      </DragOverlay> */}
+      <DragOverlay dropAnimation={{ ...defaultDropAnimation }}>
+        {activeTask ? (
+          <div
+            style={{
+              position: "fixed",
+              left: `${clientX}px`, // 15px правее курсора
+              top: `${clientY}px`,
+              transform: "none", // Отключаем стандартные трансформации
+              cursor: "grabbing",
+              zIndex: 9999,
+              // Дополнительные стили:
+              width: "200px",
+              backgroundColor: "white",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            }}
+          >
+            {activeTask.title}
+          </div>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 }
