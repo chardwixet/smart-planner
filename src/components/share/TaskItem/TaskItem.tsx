@@ -35,6 +35,10 @@ export function TaskItem({ task }: Props) {
     isDragging,
   } = useSortable({
     id: task.id,
+    data: {
+      type: "task",
+      task,
+    },
   });
 
   const style = {
@@ -67,6 +71,7 @@ export function TaskItem({ task }: Props) {
           type="text"
           onBlur={(e) => {
             setisEditing(false);
+            e.stopPropagation();
             dispatch(changeTitle({ id: task.id, title: e.target.value }));
           }}
           defaultValue={task.title}
@@ -74,7 +79,15 @@ export function TaskItem({ task }: Props) {
         />
       )}
 
-      <button onClick={() => dispatch(removeTask(task.id))}>удалить</button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log("происходит нажатие");
+          dispatch(removeTask(task.id));
+        }}
+      >
+        удалить
+      </button>
     </div>
   );
 }
