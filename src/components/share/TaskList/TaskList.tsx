@@ -14,6 +14,7 @@ import {
   useSensors,
   type DragEndEvent,
   type DragStartEvent,
+  type UniqueIdentifier,
 } from "@dnd-kit/core";
 import {
   SortableContext,
@@ -23,12 +24,12 @@ import {
 interface Props {
   className?: string;
   tasks: Task[];
-  board: Board;
+  isActiveOverId: UniqueIdentifier | null;
 }
 
 type Status = "ALL" | "COMPLETED" | "NOT_COMPLETED";
 
-export function TaskList({ tasks, board }: Props) {
+export function TaskList({ tasks, isActiveOverId }: Props) {
   const status = localStorage.getItem("filterStatus");
   const [filterStatus, setFilterStatus] = useState<Status>(
     status ? JSON.parse(status) : "ALL"
@@ -120,6 +121,7 @@ export function TaskList({ tasks, board }: Props) {
                 // onDragOver={(e) => dragOverHandler(e)}
                 // onDrop={(e) => dropHandler(e, board.id, task.id)}
                 key={task.id}
+                data-active-over={isActiveOverId === task.id}
                 className={style.item}
               >
                 <TaskItem task={task} />

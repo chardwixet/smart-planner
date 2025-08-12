@@ -7,15 +7,14 @@
 
 .item {
   cursor: cursor;
-  transition: all 0.2s ease;
+  transition: all 0.1s ease;
 
   &:hover {
     background-color: #1e1f20;
   }
 
-  &.dropIndicator {
+  &[data-active-over="true"] {
     position: relative;
-    padding-bottom: 14px; // Место для полоски
 
     &::after {
       content: "";
@@ -29,3 +28,7 @@
     }
   }
 }
+
+// .item {
+//   border-color: #4caf50;
+// }

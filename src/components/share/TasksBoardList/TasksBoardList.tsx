@@ -9,6 +9,7 @@ import {
   DragOverlay,
   MouseSensor,
   PointerSensor,
+  pointerWithin,
   TouchSensor,
   useSensor,
   useSensors,
@@ -18,9 +19,8 @@ import {
   type UniqueIdentifier,
 } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { moveTask, type Task } from "../../../store/slices/taskSlices";
-import { TaskItem } from "../TaskItem";
 
 type Props = {};
 
@@ -28,6 +28,7 @@ export function TasksBoardList({}: Props) {
   const boards = useSelector((state: RootState) => state.boards).lists;
   const tasks = useSelector((state: RootState) => state.tasks).tasks;
   const dispatch = useDispatch();
+  const itemRef = useRef(null);
 
   const mouseSensor = useSensor(MouseSensor, {
     activationConstraint: { distance: 2 },
@@ -43,6 +44,10 @@ export function TasksBoardList({}: Props) {
   const sensors = useSensors(mouseSensor, touchSensor);
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [activeOverId, setActiveOverId] = useState<UniqueIdentifier | null>(
+    null
+  );
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   function findValueOfItems(id: UniqueIdentifier | undefined, type: string) {
     if (type === "board") {
@@ -54,8 +59,17 @@ export function TasksBoardList({}: Props) {
     }
   }
 
-  const handleDragStart = (event: DragStartEvent) => {
+  const handleDragStart = (event) => {
     const { active } = event;
+
+    const activatorEvent = event.activatorEvent as MouseEvent;
+
+    setMousePosition({
+      x: activatorEvent.clientX,
+      y: activatorEvent.clientY,
+    });
+
+    console.log();
 
     if (active.data.current?.type === "task") {
       setActiveTask(active.data.current.task);
@@ -64,9 +78,25 @@ export function TasksBoardList({}: Props) {
     // const task = filteredTasks.find((t) => t.id === active.id);
   };
 
+  const handleDragMove = (event) => {
+    const { over } = event;
+    const activatorEvent = event.activatorEvent as MouseEvent;
+
+    // const droppableElement = document.querySelector(`[data-id="${over.id}"]`);
+    // if (!droppableElement) return;
+    const rect = over.rect;
+
+    const clientY = activatorEvent.clientY;
+
+    setActiveOverId(over?.id || null);
+    // const rect = over.activatorEvent.target.getBoundingClientRect();
+    console.log(clientY < rect.top + rect.height / 2);
+  };
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveTask(null);
+    setActiveOverId(null);
 
     if (!over || active.id === over.id) {
       return;
@@ -106,14 +136,11 @@ export function TasksBoardList({}: Props) {
     );
   };
 
-  useEffect(() => {
-    console.log(screenX);
-  }, [screenX]);
-
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCorners}
+      collisionDetection={pointerWithin}
+      onDragMove={handleDragMove}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
@@ -121,8 +148,12 @@ export function TasksBoardList({}: Props) {
         <ul className={style.list}>
           {boards &&
             boards.map((board) => (
-              <li key={board.id}>
-                <TasksBoard board={board} tasks={tasks} />
+              <li key={board.id} ref={itemRef}>
+                <TasksBoard
+                  board={board}
+                  tasks={tasks}
+                  isActiveOverId={activeOverId}
+                />
               </li>
             ))}
         </ul>
@@ -133,14 +164,18 @@ export function TasksBoardList({}: Props) {
           <div
             style={{
               position: "fixed",
-              left: `${10}px`, // 15px правее курсора
-              top: `${10}px`,
-              transform: "none", // Отключаем стандартные трансформации
+              left: `${mousePosition.x + 13}px`,
+              top: `${mousePosition.y}px`,
               cursor: "grabbing",
+              // Отключаем стандартные трансформации
               zIndex: 9999,
               // Дополнительные стили:
               width: "200px",
-              backgroundColor: "white",
+              backgroundColor: "#36373b",
+              textAlign: "start",
+              padding: "10px",
+              borderRadius: "5px",
+              color: "white",
               boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
             }}
           >

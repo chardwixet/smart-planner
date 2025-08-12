@@ -41,20 +41,21 @@ export function TaskItem({ task }: Props) {
     },
   });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-    cursor: isDragging ? "grabbing" : "grab",
-  };
+  // const style = {
+  //   transform: CSS.Transform.toString(transform),
+  //   transition,
+  //   opacity: isDragging ? 0.5 : 1,
+  //   display: isDragging ? "none" : "flex",
+  //   cursor: isDragging ? "grabbing" : "grab",
+  // };
 
   return (
     <div
       className={styles.task}
       ref={setNodeRef}
-      style={style}
       {...attributes}
       {...listeners}
+      style={{ display: isDragging ? "none" : "flex" }}
     >
       <input
         type="checkbox"

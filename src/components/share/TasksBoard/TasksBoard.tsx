@@ -1,19 +1,20 @@
 import style from "./TasksBoard.module.scss";
 import { TaskList } from "../TaskList";
 import { TaskForm } from "../TaskForm";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { removeList, type Board } from "../../../store/slices/boardSlices";
 import type { Task } from "../../../store/slices/taskSlices";
-import { useDroppable } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import type { UniqueIdentifier } from "@dnd-kit/core";
 
 type Props = {
   board: Board;
   tasks: Task[];
+  isActiveOverId: UniqueIdentifier | null;
 };
 
-export function TasksBoard({ board, tasks }: Props) {
+export function TasksBoard({ board, tasks, isActiveOverId }: Props) {
   const dispatch = useDispatch();
 
   const filterTasks = tasks.filter((item) => board.id === item.idBoard);
@@ -35,15 +36,15 @@ export function TasksBoard({ board, tasks }: Props) {
   return (
     <div
       {...attributes}
-      {...listeners}
       style={{ transition, transform: CSS.Translate.toString(transform) }}
       ref={setNodeRef}
       className={style.board}
     >
       <div>
-        <h2>{board.title}</h2>
+        <div className={style.header} {...listeners} />
+        <h2 className={style.subtitle}>{board.title}</h2>
         <TaskForm idBoard={board.id} />
-        <TaskList tasks={filterTasks} board={board} />
+        <TaskList tasks={filterTasks} isActiveOverId={isActiveOverId} />
         <button onClick={() => dispatch(removeList(board.id))}>Удалить</button>
       </div>
     </div>
