@@ -55,7 +55,7 @@ export function TaskItem({ task }: Props) {
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      style={{ display: isDragging ? "none" : "flex" }}
+      data-isDragging={isDragging}
     >
       <input
         type="checkbox"

@@ -27,6 +27,7 @@ type Props = {};
 export function TasksBoardList({}: Props) {
   const boards = useSelector((state: RootState) => state.boards).lists;
   const tasks = useSelector((state: RootState) => state.tasks).tasks;
+
   const dispatch = useDispatch();
   const itemRef = useRef(null);
 
