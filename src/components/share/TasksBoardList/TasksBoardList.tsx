@@ -19,10 +19,15 @@ import {
   type UniqueIdentifier,
 } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { moveTask, type Task } from "../../../store/slices/taskSlices";
+import { useMouse } from "@uidotdev/usehooks";
 
 type Props = {};
+export interface ActiveOver {
+  id: UniqueIdentifier | null;
+  pos: string;
+}
 
 export function TasksBoardList({}: Props) {
   const boards = useSelector((state: RootState) => state.boards).lists;
@@ -45,10 +50,12 @@ export function TasksBoardList({}: Props) {
   const sensors = useSensors(mouseSensor, touchSensor);
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [activeOverId, setActiveOverId] = useState<UniqueIdentifier | null>(
-    null
-  );
+  const [activeOver, setActiveOver] = useState<ActiveOver>({
+    id: null,
+    pos: "",
+  });
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mouseState] = useMouse();
 
   function findValueOfItems(id: UniqueIdentifier | undefined, type: string) {
     if (type === "board") {
@@ -64,10 +71,11 @@ export function TasksBoardList({}: Props) {
     const { active } = event;
 
     const activatorEvent = event.activatorEvent as MouseEvent;
+    const rect = (activatorEvent.target as HTMLElement).getBoundingClientRect();
 
     setMousePosition({
-      x: activatorEvent.clientX,
-      y: activatorEvent.clientY,
+      x: activatorEvent.clientX - rect.x,
+      y: activatorEvent.clientY - rect.y,
     });
 
     console.log();
@@ -80,24 +88,30 @@ export function TasksBoardList({}: Props) {
   };
 
   const handleDragMove = (event) => {
-    const { over } = event;
+    const { active, over } = event;
     const activatorEvent = event.activatorEvent as MouseEvent;
+
+    const rect = over?.rect || 0;
 
     // const droppableElement = document.querySelector(`[data-id="${over.id}"]`);
     // if (!droppableElement) return;
-    const rect = over.rect;
 
-    const clientY = activatorEvent.clientY;
+    // const rect = droppableElement.getBoundingClientRect();
 
-    setActiveOverId(over?.id || null);
     // const rect = over.activatorEvent.target.getBoundingClientRect();
-    console.log(clientY < rect.top + rect.height / 2);
+
+    if (rect) {
+      if (mouseState.y > rect.top + rect.height / 2) {
+        setActiveOver({ id: over?.id || null, pos: "bot" });
+      } else {
+        setActiveOver({ id: over?.id || null, pos: "top" });
+      }
+    }
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveTask(null);
-    setActiveOverId(null);
 
     if (!over || active.id === over.id) {
       return;
@@ -132,9 +146,12 @@ export function TasksBoardList({}: Props) {
       moveTask({
         currentId: active.id as string,
         dropId: over.id as string,
+        pos: activeOver.pos,
         idBoard: over.data.current?.task.idBoard,
       })
     );
+
+    setActiveOver({ id: null, pos: "" });
   };
 
   return (
@@ -153,7 +170,7 @@ export function TasksBoardList({}: Props) {
                 <TasksBoard
                   board={board}
                   tasks={tasks}
-                  isActiveOverId={activeOverId}
+                  isActiveOver={activeOver}
                 />
               </li>
             ))}

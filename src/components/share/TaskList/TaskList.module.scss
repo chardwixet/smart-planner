@@ -14,17 +14,34 @@
   }
 
   &[data-active-over="true"] {
-    position: relative;
+    &[data-active-pos="bot"] {
+      position: relative;
 
-    &::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 2px;
-      background: #00b0ff;
-      border-radius: 2px;
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #00b0ff;
+        border-radius: 2px;
+      }
+    }
+
+    &[data-active-pos="top"] {
+      position: relative;
+
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #00b0ff;
+        border-radius: 2px;
+      }
     }
   }
 }

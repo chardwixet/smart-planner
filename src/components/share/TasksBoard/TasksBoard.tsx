@@ -6,15 +6,15 @@ import { removeList, type Board } from "../../../store/slices/boardSlices";
 import type { Task } from "../../../store/slices/taskSlices";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { UniqueIdentifier } from "@dnd-kit/core";
+import type { ActiveOver } from "../TasksBoardList";
 
 type Props = {
   board: Board;
   tasks: Task[];
-  isActiveOverId: UniqueIdentifier | null;
+  isActiveOver: ActiveOver;
 };
 
-export function TasksBoard({ board, tasks, isActiveOverId }: Props) {
+export function TasksBoard({ board, tasks, isActiveOver }: Props) {
   const dispatch = useDispatch();
 
   const filterTasks = tasks.filter((item) => board.id === item.idBoard);
@@ -44,7 +44,7 @@ export function TasksBoard({ board, tasks, isActiveOverId }: Props) {
         <div className={style.header} {...listeners} />
         <h2 className={style.subtitle}>{board.title}</h2>
         <TaskForm idBoard={board.id} />
-        <TaskList tasks={filterTasks} isActiveOverId={isActiveOverId} />
+        <TaskList tasks={filterTasks} isActiveOver={isActiveOver} />
         <button onClick={() => dispatch(removeList(board.id))}>Удалить</button>
       </div>
     </div>

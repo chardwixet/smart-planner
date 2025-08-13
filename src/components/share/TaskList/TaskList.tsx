@@ -20,16 +20,17 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import type { ActiveOver } from "../TasksBoardList";
 
 interface Props {
   className?: string;
   tasks: Task[];
-  isActiveOverId: UniqueIdentifier | null;
+  isActiveOver: ActiveOver;
 }
 
 type Status = "ALL" | "COMPLETED" | "NOT_COMPLETED";
 
-export function TaskList({ tasks, isActiveOverId }: Props) {
+export function TaskList({ tasks, isActiveOver }: Props) {
   const status = localStorage.getItem("filterStatus");
   const [filterStatus, setFilterStatus] = useState<Status>(
     status ? JSON.parse(status) : "ALL"
@@ -121,7 +122,8 @@ export function TaskList({ tasks, isActiveOverId }: Props) {
                 // onDragOver={(e) => dragOverHandler(e)}
                 // onDrop={(e) => dropHandler(e, board.id, task.id)}
                 key={task.id}
-                data-active-over={isActiveOverId === task.id}
+                data-active-over={isActiveOver.id === task.id}
+                data-active-pos={isActiveOver.pos}
                 className={style.item}
               >
                 <TaskItem task={task} />
