@@ -110,6 +110,7 @@ export function TasksBoardList({}: Props) {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveTask(null);
+    let idBoard;
 
     if (!over || active.id === over.id) {
       setActiveOver({ id: null, pos: "" });
@@ -123,29 +124,21 @@ export function TasksBoardList({}: Props) {
         "task конец",
         over.data.current?.task
       );
+      idBoard = over.data.current?.task.idBoard;
       setActiveTask(over.data.current.task);
     }
 
     if (over.data.current?.type === "Board") {
+      idBoard = over.id;
       setActiveTask(over.data.current.task);
     }
 
-    // console.log(
-    //   "currentId",
-    //   active.id,
-    //   "dropId: ",
-    //   over.id,
-    //   "board: ",
-    //   board.id
-    // );
-
-    // Обновляем порядок в Redux
     dispatch(
       moveTask({
         currentId: active.id as string,
         dropId: over.id as string,
         pos: activeOver.pos,
-        idBoard: over.data.current?.task.idBoard,
+        idBoard: idBoard,
       })
     );
 

@@ -53,7 +53,6 @@ export function TaskItem({ task }: Props) {
       document.body.style.cursor = "grabbing";
     } else {
       document.body.style.cursor = "default";
-      console.log(isDragging);
     }
   }, [isDragging]);
 
