@@ -1,0 +1,44 @@
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-height: 200px;
+}
+
+.item {
+  cursor: cursor;
+  transition: all 0.1s ease;
+
+  &:hover {
+    background-color: #1e1f20;
+  }
+
+  &[data-active-over="true"] {
+    position: relative;
+    &[data-active-pos="bot"] {
+      &::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #00b0ff;
+        border-radius: 2px;
+      }
+    }
+
+    &[data-active-pos="top"] {
+      &::before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #00b0ff;
+        border-radius: 2px;
+      }
+    }
+  }
+}

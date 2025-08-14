@@ -1,7 +1,8 @@
-import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, current, type PayloadAction } from "@reduxjs/toolkit";
 
 export type Task = {
   id: string;
+  idBoard: string;
   title: string;
   status: boolean;
 };
@@ -20,10 +21,11 @@ const taskSlices = createSlice({
   name: "task",
   initialState,
   reducers: {
-    addTask(state, action: PayloadAction<string>) {
+    addTask(state, action: PayloadAction<{ idBoard: string; title: string }>) {
       state.tasks.push({
         id: crypto.randomUUID(),
-        title: action.payload,
+        idBoard: action.payload.idBoard,
+        title: action.payload.title,
         status: false,
       });
 
@@ -35,6 +37,55 @@ const taskSlices = createSlice({
       if (task) {
         task.title = action.payload.title;
       }
+      localStorage.setItem("tasks", JSON.stringify(state.tasks));
+    },
+    moveTask(
+      state,
+      action: PayloadAction<{
+        currentId: string;
+        dropId: string;
+        pos: string;
+        idBoard: string;
+      }>
+    ) {
+      const currentId = state.tasks.findIndex(
+        (item) => item.id === action.payload.currentId
+      );
+      const dropId = state.tasks.findIndex(
+        (item) => item.id === action.payload.dropId
+      );
+
+      const idBoard = action.payload.idBoard;
+      const pos = action.payload.pos;
+
+      if (currentId === -1 || currentId === dropId) {
+        return;
+      }
+
+      const task = state.tasks.find(
+        (item) => item.id === action.payload.currentId
+      );
+
+      state.tasks.splice(currentId, 1);
+
+      if (dropId !== -1) {
+        let adjustedDropIndex =
+          currentId < dropId || pos === "top" ? dropId - 1 : dropId;
+        // const adjustedDropIndex = dropId;
+        // const adjustedDropIndex = dropId - 1;
+
+        if (task) {
+          state.tasks.splice(adjustedDropIndex + 1, 0, task);
+
+          if (task.idBoard !== idBoard) task.idBoard = idBoard;
+        }
+      } else {
+        if (task) {
+          task.idBoard = idBoard;
+          state.tasks.push(task);
+        }
+      }
+
       localStorage.setItem("tasks", JSON.stringify(state.tasks));
     },
     changeStatus(state, action: PayloadAction<string>) {
@@ -54,7 +105,7 @@ const taskSlices = createSlice({
   },
 });
 
-export const { addTask, changeStatus, changeTitle, removeTask } =
+export const { addTask, changeStatus, moveTask, changeTitle, removeTask } =
   taskSlices.actions;
 
 export default taskSlices.reducer;

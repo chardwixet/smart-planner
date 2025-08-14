@@ -1,0 +1,10 @@
+.list {
+  display: grid;
+  list-style: none;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+}
+
+.listItem[data-active-over="true"] {
+  border-bottom: 3px solid #4caf50;
+}

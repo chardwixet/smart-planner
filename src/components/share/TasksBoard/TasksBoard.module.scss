@@ -1,0 +1,26 @@
+.board {
+  padding: 6px;
+  background-color: #131313;
+  max-width: 678px;
+  border-radius: 10px;
+  position: relative;
+
+  user-select: none; /* стандартное свойство */
+  -webkit-user-select: none; /* для Safari */
+  -moz-user-select: none; /* для Firefox */
+  -ms-user-select: none; /* для IE/Edge */
+}
+
+.header {
+  position: absolute;
+  z-index: 10;
+  left: 0px;
+  top: 0;
+  border-radius: 5px 5px 0 0;
+  width: 100%;
+  height: 30px;
+}
+
+.subtitle {
+  margin: 0;
+}

@@ -5,16 +5,17 @@ import { useState } from "react";
 
 interface Props {
   className?: string;
+  idBoard: string;
 }
 
-export function TaskForm({ className }: Props) {
+export function TaskForm({ className, idBoard }: Props) {
   const [inputValue, setInputValue] = useState("");
   const dispatch = useDispatch();
 
   function taskAdd(e) {
     e.preventDefault();
     if (inputValue) {
-      dispatch(addTask(inputValue));
+      dispatch(addTask({ title: inputValue, idBoard }));
     }
   }
 
