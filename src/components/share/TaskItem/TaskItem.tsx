@@ -41,13 +41,21 @@ export function TaskItem({ task }: Props) {
     },
   });
 
-  // const style = {
-  //   transform: CSS.Transform.toString(transform),
-  //   transition,
-  //   opacity: isDragging ? 0.5 : 1,
-  //   display: isDragging ? "none" : "flex",
-  //   cursor: isDragging ? "grabbing" : "grab",
-  // };
+  const style = {
+    // transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    display: isDragging ? "none" : "flex",
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      document.body.style.cursor = "grabbing";
+    } else {
+      document.body.style.cursor = "default";
+      console.log(isDragging);
+    }
+  }, [isDragging]);
 
   return (
     <div
@@ -55,7 +63,8 @@ export function TaskItem({ task }: Props) {
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      data-isDragging={isDragging}
+      style={style}
+      // data-isDragging={isDragging}
     >
       <input
         type="checkbox"
@@ -83,7 +92,6 @@ export function TaskItem({ task }: Props) {
       <button
         onClick={(e) => {
           e.stopPropagation();
-          console.log("происходит нажатие");
           dispatch(removeTask(task.id));
         }}
       >

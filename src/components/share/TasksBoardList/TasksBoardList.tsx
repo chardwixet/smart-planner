@@ -71,14 +71,12 @@ export function TasksBoardList({}: Props) {
     const { active } = event;
 
     const activatorEvent = event.activatorEvent as MouseEvent;
-    const rect = (activatorEvent.target as HTMLElement).getBoundingClientRect();
+    // const rect = (activatorEvent.target as HTMLElement).getBoundingClientRect();
 
     setMousePosition({
-      x: activatorEvent.clientX - rect.x,
-      y: activatorEvent.clientY - rect.y,
+      x: activatorEvent.clientX,
+      y: activatorEvent.clientY,
     });
-
-    console.log();
 
     if (active.data.current?.type === "task") {
       setActiveTask(active.data.current.task);
@@ -87,7 +85,7 @@ export function TasksBoardList({}: Props) {
     // const task = filteredTasks.find((t) => t.id === active.id);
   };
 
-  const handleDragMove = (event) => {
+  const handleDragMove = (event: DragMoveEvent) => {
     const { active, over } = event;
     const activatorEvent = event.activatorEvent as MouseEvent;
 
@@ -114,6 +112,7 @@ export function TasksBoardList({}: Props) {
     setActiveTask(null);
 
     if (!over || active.id === over.id) {
+      setActiveOver({ id: null, pos: "" });
       return;
     }
 
@@ -128,7 +127,6 @@ export function TasksBoardList({}: Props) {
     }
 
     if (over.data.current?.type === "Board") {
-      console.log("board", over.id);
       setActiveTask(over.data.current.task);
     }
 
@@ -184,8 +182,6 @@ export function TasksBoardList({}: Props) {
               position: "fixed",
               left: `${mousePosition.x + 13}px`,
               top: `${mousePosition.y}px`,
-              cursor: "grabbing",
-              // Отключаем стандартные трансформации
               zIndex: 9999,
               // Дополнительные стили:
               width: "200px",

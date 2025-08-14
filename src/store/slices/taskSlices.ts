@@ -59,7 +59,6 @@ const taskSlices = createSlice({
       const pos = action.payload.pos;
 
       if (currentId === -1 || currentId === dropId) {
-        console.log("вышел ничего не сделав");
         return;
       }
 
@@ -74,8 +73,6 @@ const taskSlices = createSlice({
           currentId < dropId || pos === "top" ? dropId - 1 : dropId;
         // const adjustedDropIndex = dropId;
         // const adjustedDropIndex = dropId - 1;
-        console.log(currentId, adjustedDropIndex);
-        console.log(pos);
 
         if (task) {
           state.tasks.splice(adjustedDropIndex + 1, 0, task);
