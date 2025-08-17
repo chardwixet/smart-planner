@@ -67,7 +67,7 @@ export function TasksBoardList({}: Props) {
     }
   }
 
-  const handleDragStart = (event) => {
+  const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
 
     const activatorEvent = event.activatorEvent as MouseEvent;
@@ -81,29 +81,32 @@ export function TasksBoardList({}: Props) {
     if (active.data.current?.type === "task") {
       setActiveTask(active.data.current.task);
     }
-
-    // const task = filteredTasks.find((t) => t.id === active.id);
   };
 
   const handleDragMove = (event: DragMoveEvent) => {
-    const { active, over } = event;
-    const activatorEvent = event.activatorEvent as MouseEvent;
+    const { over } = event;
 
     const rect = over?.rect || 0;
 
-    // const droppableElement = document.querySelector(`[data-id="${over.id}"]`);
-    // if (!droppableElement) return;
+    // console.log(rect, over);
 
-    // const rect = droppableElement.getBoundingClientRect();
-
-    // const rect = over.activatorEvent.target.getBoundingClientRect();
-
-    if (rect) {
+    if (rect && over?.data.current?.type === "task") {
       if (mouseState.y > rect.top + rect.height / 2) {
         setActiveOver({ id: over?.id || null, pos: "bot" });
       } else {
         setActiveOver({ id: over?.id || null, pos: "top" });
       }
+    }
+
+    if (over?.data.current?.type === "Board") {
+      const tasks = over.data.current.tasks;
+      const last = tasks.length - 1;
+
+      setActiveOver({
+        id: tasks[last].id,
+        pos: "bot",
+      });
+      console.log(tasks[last].id);
     }
   };
 

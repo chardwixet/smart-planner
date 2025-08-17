@@ -30,6 +30,7 @@ export function TasksBoard({ board, tasks, isActiveOver }: Props) {
     id: board.id,
     data: {
       type: "Board",
+      tasks: filterTasks,
     },
   });
 
