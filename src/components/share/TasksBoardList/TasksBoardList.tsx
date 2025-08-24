@@ -51,7 +51,7 @@ export function TasksBoardList({}: Props) {
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [activeOver, setActiveOver] = useState<ActiveOver>({
-    id: null,
+    id: "",
     pos: "",
   });
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -90,11 +90,15 @@ export function TasksBoardList({}: Props) {
 
     // console.log(rect, over);
 
+    if (!rect) {
+      setActiveOver({ id: "", pos: "" });
+    }
+
     if (rect && over?.data.current?.type === "task") {
       if (mouseState.y > rect.top + rect.height / 2) {
-        setActiveOver({ id: over?.id || null, pos: "bot" });
+        setActiveOver({ id: over?.id || "", pos: "bot" });
       } else {
-        setActiveOver({ id: over?.id || null, pos: "top" });
+        setActiveOver({ id: over?.id || "", pos: "top" });
       }
     }
 
@@ -145,7 +149,7 @@ export function TasksBoardList({}: Props) {
       })
     );
 
-    setActiveOver({ id: null, pos: "" });
+    setActiveOver({ id: "", pos: "" });
   };
 
   return (

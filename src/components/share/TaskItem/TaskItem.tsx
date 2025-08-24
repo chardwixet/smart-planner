@@ -54,8 +54,6 @@ export function TaskItem({ task }: Props) {
     } else {
       document.body.style.cursor = "default";
     }
-
-    console.log(isDragging);
   }, [isDragging]);
 
   return (
