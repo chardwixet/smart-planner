@@ -35,18 +35,22 @@ export function TasksBoard({ board, tasks, isActiveOver }: Props) {
   });
 
   return (
-    <div
-      {...attributes}
-      style={{ transition, transform: CSS.Translate.toString(transform) }}
-      ref={setNodeRef}
-      className={style.board}
-    >
-      <div>
-        <div className={style.header} {...listeners} />
-        <h2 className={style.subtitle}>{board.title}</h2>
-        <TaskForm idBoard={board.id} />
-        <TaskList tasks={filterTasks} isActiveOver={isActiveOver} />
-        <button onClick={() => dispatch(removeList(board.id))}>Удалить</button>
+    <div className={style.bakcList}>
+      <div
+        {...attributes}
+        style={{ transition, transform: CSS.Translate.toString(transform) }}
+        ref={setNodeRef}
+        className={style.board}
+      >
+        <div>
+          <div className={style.header} {...listeners} />
+          <h2 className={style.subtitle}>{board.title}</h2>
+          <TaskForm idBoard={board.id} />
+          <TaskList tasks={filterTasks} isActiveOver={isActiveOver} />
+          <button onClick={() => dispatch(removeList(board.id))}>
+            Удалить
+          </button>
+        </div>
       </div>
     </div>
   );

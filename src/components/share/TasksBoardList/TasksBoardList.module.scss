@@ -1,8 +1,6 @@
 .list {
-  display: grid;
+  display: flex;
   list-style: none;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 40px;
 }
 
 .listItem[data-active-over="true"] {

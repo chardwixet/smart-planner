@@ -156,43 +156,45 @@ export function TasksBoardList({}: Props) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <SortableContext items={boards.map((i) => i.id)}>
-        <ul className={style.list}>
-          {boards &&
-            boards.map((board) => (
-              <li key={board.id} ref={itemRef}>
-                <TasksBoard
-                  board={board}
-                  tasks={tasks}
-                  isActiveOver={activeOver}
-                />
-              </li>
-            ))}
-        </ul>
-      </SortableContext>
+      <div>
+        <SortableContext items={boards.map((i) => i.id)}>
+          <ul className={style.list}>
+            {boards &&
+              boards.map((board) => (
+                <li key={board.id} ref={itemRef}>
+                  <TasksBoard
+                    board={board}
+                    tasks={tasks}
+                    isActiveOver={activeOver}
+                  />
+                </li>
+              ))}
+          </ul>
+        </SortableContext>
 
-      <DragOverlay dropAnimation={{ ...defaultDropAnimation }}>
-        {activeTask ? (
-          <div
-            style={{
-              position: "fixed",
-              left: `${mousePosition.x + 13}px`,
-              top: `${mousePosition.y}px`,
-              zIndex: 9999,
-              // Дополнительные стили:
-              width: "200px",
-              backgroundColor: "#36373b",
-              textAlign: "start",
-              padding: "10px",
-              borderRadius: "5px",
-              color: "white",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-            }}
-          >
-            {activeTask.title}
-          </div>
-        ) : null}
-      </DragOverlay>
+        <DragOverlay dropAnimation={{ ...defaultDropAnimation }}>
+          {activeTask ? (
+            <div
+              style={{
+                position: "fixed",
+                left: `${mousePosition.x + 13}px`,
+                top: `${mousePosition.y}px`,
+                zIndex: 9999,
+                // Дополнительные стили:
+                width: "200px",
+                backgroundColor: "#36373b",
+                textAlign: "start",
+                padding: "10px",
+                borderRadius: "5px",
+                color: "white",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+              }}
+            >
+              {activeTask.title}
+            </div>
+          ) : null}
+        </DragOverlay>
+      </div>
     </DndContext>
   );
 }
