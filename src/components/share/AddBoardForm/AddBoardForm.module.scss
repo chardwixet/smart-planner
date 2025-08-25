@@ -1,0 +1,60 @@
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 6px;
+  background-color: #131313;
+  max-width: 678px;
+  border-radius: 10px;
+  position: relative;
+
+  user-select: none; /* стандартное свойство */
+  -webkit-user-select: none; /* для Safari */
+  -moz-user-select: none; /* для Firefox */
+  -ms-user-select: none; /* для IE/Edge */
+}
+
+.input {
+  border: none;
+  border-radius: 4px;
+  background-color: #22272c;
+  padding: 6px 12px;
+  color: #b6c2cf;
+
+  &:focus-visible {
+    outline: 2px solid #84b9ff;
+  }
+
+  &::placeholder {
+    color: #919da8;
+  }
+}
+.button {
+  background: none;
+  border: none;
+  padding: 0;
+  outline: none;
+  padding: 6px 12px;
+  color: #172b4d;
+  background-color: #579dfd;
+  border-radius: 3px;
+  cursor: pointer;
+
+  transition: background-color 0.1s ease-in-out;
+
+  &:hover {
+    background-color: #85b8ff;
+  }
+
+  &:active {
+    background-color: #cce0ff;
+  }
+}
+
+.buttonEx {
+  background: none;
+  border: none;
+  padding: 0;
+  color: white;
+  cursor: pointer;
+}

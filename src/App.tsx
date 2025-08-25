@@ -1,4 +1,5 @@
-import "./App.scss";
+import "./App.module.scss";
+
 import { TasksPage } from "./components/share/TasksPage";
 
 function App() {

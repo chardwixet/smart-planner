@@ -22,6 +22,7 @@ import { SortableContext } from "@dnd-kit/sortable";
 import { useEffect, useRef, useState } from "react";
 import { moveTask, type Task } from "../../../store/slices/taskSlices";
 import { useMouse } from "@uidotdev/usehooks";
+import { AddBoardForm } from "../AddBoardForm";
 
 type Props = {};
 export interface ActiveOver {
@@ -173,6 +174,7 @@ export function TasksBoardList({}: Props) {
                   />
                 </li>
               ))}
+            <AddBoardForm />
           </ul>
         </SortableContext>
 
