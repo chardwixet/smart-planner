@@ -35,7 +35,7 @@ export function TasksBoard({ board, tasks, isActiveOver }: Props) {
   });
 
   return (
-    <div className={style.bakcList}>
+    <>
       <div
         {...attributes}
         style={{ transition, transform: CSS.Translate.toString(transform) }}
@@ -52,6 +52,6 @@ export function TasksBoard({ board, tasks, isActiveOver }: Props) {
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
 }

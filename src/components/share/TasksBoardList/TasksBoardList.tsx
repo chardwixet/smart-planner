@@ -58,21 +58,10 @@ export function TasksBoardList({}: Props) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [mouseState] = useMouse();
 
-  function findValueOfItems(id: UniqueIdentifier | undefined, type: string) {
-    if (type === "board") {
-      return boards.find((board) => board.id === id);
-    }
-
-    if (type === "board") {
-      return boards.find((board) => board.id === id);
-    }
-  }
-
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
 
     const activatorEvent = event.activatorEvent as MouseEvent;
-    // const rect = (activatorEvent.target as HTMLElement).getBoundingClientRect();
 
     setMousePosition({
       x: activatorEvent.clientX,
@@ -86,10 +75,7 @@ export function TasksBoardList({}: Props) {
 
   const handleDragMove = (event: DragMoveEvent) => {
     const { over } = event;
-
     const rect = over?.rect || 0;
-
-    // console.log(rect, over);
 
     if (!rect) {
       setActiveOver({ id: "", pos: "" });
@@ -166,7 +152,11 @@ export function TasksBoardList({}: Props) {
           <ul className={style.list}>
             {boards &&
               boards.map((board) => (
-                <li key={board.id} ref={itemRef}>
+                <li
+                  key={board.id}
+                  ref={itemRef}
+                  className={style.backgroundItem}
+                >
                   <TasksBoard
                     board={board}
                     tasks={tasks}

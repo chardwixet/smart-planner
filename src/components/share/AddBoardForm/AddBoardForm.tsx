@@ -2,13 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addList } from "../../../store/slices/boardSlices";
 import style from "./AddBoardForm.module.scss";
+import { useClickAway } from "@uidotdev/usehooks";
 
-type Props = {};
-
-export function AddBoardForm({}: Props) {
+export function AddBoardForm() {
   const [inputValue, setInputValue] = useState("");
   const [isEditing, setisEditing] = useState(false);
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const formRef = useClickAway<HTMLFormElement>(unFocus);
+
+  function unFocus() {
+    setisEditing(false);
+    setInputValue("");
+  }
 
   const dispatch = useDispatch();
 
@@ -19,17 +24,18 @@ export function AddBoardForm({}: Props) {
     }
   }, [isEditing]);
 
-  function add(e) {
+  function add(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (inputValue) {
       dispatch(addList(inputValue));
     }
 
+    inputRef.current?.focus();
     setInputValue("");
   }
 
   return (
-    <form onSubmit={add}>
+    <form onSubmit={add} ref={formRef} className={style.form}>
       {!isEditing ? (
         <button
           className={style.addButton}
@@ -37,32 +43,48 @@ export function AddBoardForm({}: Props) {
             setisEditing(true);
           }}
         >
-          Добавить список
+          <svg
+            width="24"
+            height="24"
+            role="presentation"
+            focusable="false"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M12 3C11.4477 3 11 3.44772 11 4V11L4 11C3.44772 11 3 11.4477 3 12C3 12.5523 3.44772 13 4 13H11V20C11 20.5523 11.4477 21 12 21C12.5523 21 13 20.5523 13 20V13H20C20.5523 13 21 12.5523 21 12C21 11.4477 20.5523 11 20 11L13 11V4C13 3.44772 12.5523 3 12 3Z"
+              fill="currentColor"
+            ></path>
+          </svg>
+
+          <span>Добавить список</span>
         </button>
       ) : (
         <div
           className={style.board}
-          //подправить здесь, почему то скрывается модалка даже если просто мимо Input шлёпнуть
-          onBlur={(e) => {
-            setisEditing(false);
+          onMouseDown={(e) => {
+            e.preventDefault();
           }}
         >
           <input
+            id="title"
             ref={inputRef}
             type="text"
             placeholder="Введите имя списка"
             onChange={(e) => setInputValue(e.target.value)}
             className={style.input}
+            value={inputValue}
+            autoComplete="off"
+            spellCheck="false"
           />
-          <div>
-            <button className={style.button}>Добавить</button>
-            <button
-              className={style.buttonEx}
-              onClick={(e) => {
-                setisEditing(false);
-                e.stopPropagation();
-              }}
-            >
+          <div
+            className={style.buttonContainer}
+            onMouseDown={(e) => {
+              e.preventDefault();
+            }}
+          >
+            <button className={style.button}>Добавить список</button>
+            <button className={style.buttonEx} onClick={unFocus}>
               <svg
                 width="24"
                 height="24"
