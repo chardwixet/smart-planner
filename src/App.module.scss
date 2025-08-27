@@ -8,9 +8,29 @@
   text-align: center;
 }
 
+html {
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
 body {
   background-color: #1f2428;
   color: #e3e3e3;
   font-size: 14px;
   font-family: "Segoe UI", Roboto, Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
 }

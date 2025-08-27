@@ -1,7 +1,6 @@
 import { useDispatch } from "react-redux";
-import { Input } from "../../ui/Input";
-import { addTask } from "../../../store/slices/taskSlices";
 import { useState } from "react";
+import { addTask } from "@store/slices/taskSlices";
 
 interface Props {
   className?: string;
@@ -12,7 +11,7 @@ export function TaskForm({ className, idBoard }: Props) {
   const [inputValue, setInputValue] = useState("");
   const dispatch = useDispatch();
 
-  function taskAdd(e) {
+  function taskAdd(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (inputValue) {
       dispatch(addTask({ title: inputValue, idBoard }));

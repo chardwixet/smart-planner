@@ -1,3 +1,5 @@
+@use "@scss/mixins" as *;
+
 .form {
   align-self: flex-start;
   padding: 0 10px;
@@ -37,12 +39,6 @@
   &::placeholder {
     color: #919da8;
   }
-}
-
-@mixin buttonReset {
-  background: none;
-  border: none;
-  padding: 0;
 }
 
 .button {

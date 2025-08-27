@@ -1,17 +1,17 @@
+@use "@scss/mixins" as *;
+
 .list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  @include listReset;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
   min-height: 200px;
 }
 
 .item {
   cursor: cursor;
   transition: all 0.1s ease;
-
-  &:hover {
-    background-color: #1e1f20;
-  }
 
   &[data-active-over="true"] {
     position: relative;

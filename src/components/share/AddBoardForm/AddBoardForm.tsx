@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
-import { addList } from "../../../store/slices/boardSlices";
+
 import style from "./AddBoardForm.module.scss";
 import { useClickAway } from "@uidotdev/usehooks";
+import { addList } from "@store/slices/boardSlices";
 
 export function AddBoardForm() {
   const [inputValue, setInputValue] = useState("");

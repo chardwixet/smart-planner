@@ -1,14 +1,11 @@
 import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "../../../store";
 import { TasksBoard } from "../TasksBoard";
 import style from "./TasksBoardList.module.scss";
 import {
-  closestCorners,
   defaultDropAnimation,
   DndContext,
   DragOverlay,
   MouseSensor,
-  PointerSensor,
   pointerWithin,
   TouchSensor,
   useSensor,
@@ -19,10 +16,11 @@ import {
   type UniqueIdentifier,
 } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import { useEffect, useRef, useState } from "react";
-import { moveTask, type Task } from "../../../store/slices/taskSlices";
+import { useRef, useState } from "react";
 import { useMouse } from "@uidotdev/usehooks";
 import { AddBoardForm } from "../AddBoardForm";
+import type { RootState } from "@store/index";
+import { moveTask, type Task } from "@store/slices/taskSlices";
 
 type Props = {};
 export interface ActiveOver {
@@ -147,50 +145,44 @@ export function TasksBoardList({}: Props) {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div>
-        <SortableContext items={boards.map((i) => i.id)}>
-          <ul className={style.list}>
-            {boards &&
-              boards.map((board) => (
-                <li
-                  key={board.id}
-                  ref={itemRef}
-                  className={style.backgroundItem}
-                >
-                  <TasksBoard
-                    board={board}
-                    tasks={tasks}
-                    isActiveOver={activeOver}
-                  />
-                </li>
-              ))}
-            <AddBoardForm />
-          </ul>
-        </SortableContext>
+      <SortableContext items={boards.map((i) => i.id)}>
+        <ul className={style.list}>
+          {boards &&
+            boards.map((board) => (
+              <li key={board.id} ref={itemRef} className={style.backgroundItem}>
+                <TasksBoard
+                  board={board}
+                  tasks={tasks}
+                  isActiveOver={activeOver}
+                />
+              </li>
+            ))}
+          <AddBoardForm />
+        </ul>
+      </SortableContext>
 
-        <DragOverlay dropAnimation={{ ...defaultDropAnimation }}>
-          {activeTask ? (
-            <div
-              style={{
-                position: "fixed",
-                left: `${mousePosition.x + 13}px`,
-                top: `${mousePosition.y}px`,
-                zIndex: 9999,
-                // Дополнительные стили:
-                width: "200px",
-                backgroundColor: "#36373b",
-                textAlign: "start",
-                padding: "10px",
-                borderRadius: "5px",
-                color: "white",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-              }}
-            >
-              {activeTask.title}
-            </div>
-          ) : null}
-        </DragOverlay>
-      </div>
+      <DragOverlay dropAnimation={{ ...defaultDropAnimation }}>
+        {activeTask ? (
+          <div
+            style={{
+              position: "fixed",
+              left: `${mousePosition.x + 13}px`,
+              top: `${mousePosition.y}px`,
+              zIndex: 9999,
+              // Дополнительные стили:
+              width: "200px",
+              backgroundColor: "#36373b",
+              textAlign: "start",
+              padding: "10px",
+              borderRadius: "5px",
+              color: "white",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            }}
+          >
+            {activeTask.title}
+          </div>
+        ) : null}
+      </DragOverlay>
     </DndContext>
   );
 }

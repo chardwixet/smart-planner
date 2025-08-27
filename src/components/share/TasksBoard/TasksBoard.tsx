@@ -45,11 +45,11 @@ export function TasksBoard({ board, tasks, isActiveOver }: Props) {
         <div>
           <div className={style.header} {...listeners} />
           <h2 className={style.subtitle}>{board.title}</h2>
-          <TaskForm idBoard={board.id} />
-          <TaskList tasks={filterTasks} isActiveOver={isActiveOver} />
           <button onClick={() => dispatch(removeList(board.id))}>
-            Удалить
+            Удалить доску
           </button>
+          <TaskList tasks={filterTasks} isActiveOver={isActiveOver} />
+          <TaskForm idBoard={board.id} />
         </div>
       </div>
     </>

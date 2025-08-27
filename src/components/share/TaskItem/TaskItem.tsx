@@ -5,10 +5,12 @@ import {
   removeTask,
   type Task,
 } from "../../../store/slices/taskSlices";
-import styles from "./TaskItem.module.scss";
 import { useEffect, useRef, useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+
+import TrashIcon from "@/assets/svg/trash.svg?react";
+import style from "./TaskItem.module.scss";
 
 interface Props {
   task: Task;
@@ -41,7 +43,7 @@ export function TaskItem({ task }: Props) {
     },
   });
 
-  const style = {
+  const styles = {
     // transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
@@ -58,11 +60,11 @@ export function TaskItem({ task }: Props) {
 
   return (
     <div
-      className={styles.task}
+      className={style.task}
       ref={setNodeRef}
       {...attributes}
       {...listeners}
-      style={style}
+      style={styles}
       // data-isDragging={isDragging}
     >
       <input
@@ -71,7 +73,7 @@ export function TaskItem({ task }: Props) {
         onChange={() => dispatch(changeStatus(task.id))}
       />
       {!isEditing ? (
-        <span className={styles.input} onClick={() => setisEditing(true)}>
+        <span className={style.input} onClick={() => setisEditing(true)}>
           {task.title}
         </span>
       ) : (
@@ -84,7 +86,7 @@ export function TaskItem({ task }: Props) {
             dispatch(changeTitle({ id: task.id, title: e.target.value }));
           }}
           defaultValue={task.title}
-          className={styles.input}
+          className={style.input}
         />
       )}
 
@@ -93,8 +95,9 @@ export function TaskItem({ task }: Props) {
           e.stopPropagation();
           dispatch(removeTask(task.id));
         }}
+        className={style.deleteButton}
       >
-        удалить
+        <TrashIcon className={style.trashSvg} />
       </button>
     </div>
   );

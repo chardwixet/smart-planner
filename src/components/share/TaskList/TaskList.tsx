@@ -1,21 +1,8 @@
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "../../../store";
+import { useDispatch } from "react-redux";
 import { TaskItem } from "../TaskItem";
-import { useEffect, useState, type DragEvent } from "react";
+import { useState } from "react";
 import style from "./TaskList.module.scss";
-import { moveTask, type Task } from "../../../store/slices/taskSlices";
-import type { Board } from "../../../store/slices/boardSlices";
-import {
-  closestCenter,
-  closestCorners,
-  DndContext,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  type DragStartEvent,
-  type UniqueIdentifier,
-} from "@dnd-kit/core";
+import type { Task } from "@store/slices/taskSlices";
 import {
   SortableContext,
   verticalListSortingStrategy,
@@ -35,10 +22,6 @@ export function TaskList({ tasks, isActiveOver }: Props) {
   const [filterStatus, setFilterStatus] = useState<Status>(
     status ? JSON.parse(status) : "ALL"
   );
-
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
-
-  const dispatch = useDispatch();
 
   const filteredTasks = tasks.filter((item) => {
     switch (filterStatus) {
@@ -60,11 +43,11 @@ export function TaskList({ tasks, isActiveOver }: Props) {
 
   return (
     <div>
-      <div>
+      {/* <div>
         <button onClick={() => setStatus("ALL")}>All</button>
         <button onClick={() => setStatus("COMPLETED")}>Completed</button>
         <button onClick={() => setStatus("NOT_COMPLETED")}>NotCompleted</button>
-      </div>
+      </div> */}
 
       <SortableContext
         items={filteredTasks.map((t) => t.id)}
@@ -83,11 +66,7 @@ export function TaskList({ tasks, isActiveOver }: Props) {
               </li>
             ))
           ) : (
-            <li
-              // onDragOver={(e) => dragOverHandler(e)}
-              // onDrop={(e) => dropHandler(e, board.id, "")}
-              className={style.item}
-            ></li>
+            <li className={style.item}></li>
           )}
         </ul>
       </SortableContext>
