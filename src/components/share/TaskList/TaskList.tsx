@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { TaskItem } from "../TaskItem";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import style from "./TaskList.module.scss";
 import type { Task } from "@store/slices/taskSlices";
 import {
@@ -23,18 +23,24 @@ export function TaskList({ tasks, isActiveOver }: Props) {
     status ? JSON.parse(status) : "ALL"
   );
 
-  const filteredTasks = tasks.filter((item) => {
-    switch (filterStatus) {
-      case "ALL":
-        return item;
+  // const filteredTasks = tasks.filter((item) => {
+  //   switch (filterStatus) {
+  //     case "ALL":
+  //       return item;
 
-      case "COMPLETED":
-        return item.status === true;
+  //     case "COMPLETED":
+  //       return item.status === true;
 
-      case "NOT_COMPLETED":
-        return item.status === false;
-    }
-  });
+  //     case "NOT_COMPLETED":
+  //       return item.status === false;
+  //   }
+  // });
+
+  const filteredTasks = tasks;
+
+  const tasksIds = useMemo(() => {
+    return filteredTasks.map((t) => t.id);
+  }, [filteredTasks]);
 
   function setStatus(status: Status) {
     setFilterStatus(status);
@@ -49,17 +55,17 @@ export function TaskList({ tasks, isActiveOver }: Props) {
         <button onClick={() => setStatus("NOT_COMPLETED")}>NotCompleted</button>
       </div> */}
 
-      <SortableContext
-        items={filteredTasks.map((t) => t.id)}
-        strategy={verticalListSortingStrategy}
-      >
-        <ul className={style.list}>
+      <ul className={style.list}>
+        <SortableContext
+          items={tasksIds}
+          strategy={verticalListSortingStrategy}
+        >
           {filteredTasks.length ? (
             filteredTasks.map((task) => (
               <li
                 key={task.id}
                 data-active-over={isActiveOver.id === task.id}
-                data-active-pos={isActiveOver.pos}
+                // data-active-pos={isActiveOver.pos}
                 className={style.item}
               >
                 <TaskItem task={task} />
@@ -68,8 +74,8 @@ export function TaskList({ tasks, isActiveOver }: Props) {
           ) : (
             <li className={style.item}></li>
           )}
-        </ul>
-      </SortableContext>
+        </SortableContext>
+      </ul>
     </div>
   );
 }

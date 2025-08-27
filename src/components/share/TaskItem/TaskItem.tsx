@@ -44,19 +44,15 @@ export function TaskItem({ task }: Props) {
   });
 
   const styles = {
-    // transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
-    display: isDragging ? "none" : "flex",
+    transform: CSS.Transform.toString(transform),
+    // opacity: isDragging ? 0.5 : 1,
+    // display: isDragging ? "none" : "flex",
   };
 
-  useEffect(() => {
-    if (isDragging) {
-      document.body.style.cursor = "grabbing";
-    } else {
-      document.body.style.cursor = "default";
-    }
-  }, [isDragging]);
+  // if (isDragging) {
+  //   return <div ref={setNodeRef} style={styles} className={style.task}></div>;
+  // }
 
   return (
     <div

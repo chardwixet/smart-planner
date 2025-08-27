@@ -44,7 +44,7 @@ const taskSlices = createSlice({
       action: PayloadAction<{
         currentId: string;
         dropId: string;
-        pos: string;
+
         idBoard: string;
       }>
     ) {
@@ -56,7 +56,6 @@ const taskSlices = createSlice({
       );
 
       const idBoard = action.payload.idBoard;
-      const pos = action.payload.pos;
 
       if (currentId === -1 || currentId === dropId) {
         return;
@@ -69,8 +68,7 @@ const taskSlices = createSlice({
       state.tasks.splice(currentId, 1);
 
       if (dropId !== -1) {
-        let adjustedDropIndex =
-          currentId < dropId || pos === "top" ? dropId - 1 : dropId;
+        let adjustedDropIndex = dropId - 1;
         // const adjustedDropIndex = dropId;
         // const adjustedDropIndex = dropId - 1;
 

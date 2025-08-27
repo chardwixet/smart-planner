@@ -25,7 +25,6 @@ import { moveTask, type Task } from "@store/slices/taskSlices";
 type Props = {};
 export interface ActiveOver {
   id: UniqueIdentifier | null;
-  pos: string;
 }
 
 export function TasksBoardList({}: Props) {
@@ -51,10 +50,9 @@ export function TasksBoardList({}: Props) {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [activeOver, setActiveOver] = useState<ActiveOver>({
     id: "",
-    pos: "",
   });
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [mouseState] = useMouse();
+  // const [mouseState] = useMouse();
 
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -68,6 +66,7 @@ export function TasksBoardList({}: Props) {
 
     if (active.data.current?.type === "task") {
       setActiveTask(active.data.current.task);
+      return;
     }
   };
 
@@ -76,15 +75,11 @@ export function TasksBoardList({}: Props) {
     const rect = over?.rect || 0;
 
     if (!rect) {
-      setActiveOver({ id: "", pos: "" });
+      setActiveOver({ id: "" });
     }
 
     if (rect && over?.data.current?.type === "task") {
-      if (mouseState.y > rect.top + rect.height / 2) {
-        setActiveOver({ id: over?.id || "", pos: "bot" });
-      } else {
-        setActiveOver({ id: over?.id || "", pos: "top" });
-      }
+      setActiveOver({ id: over?.id || "" });
     }
 
     if (over?.data.current?.type === "Board") {
@@ -93,7 +88,6 @@ export function TasksBoardList({}: Props) {
 
       setActiveOver({
         id: tasks[last].id,
-        pos: "bot",
       });
       console.log(tasks[last].id);
     }
@@ -105,7 +99,7 @@ export function TasksBoardList({}: Props) {
     let idBoard;
 
     if (!over || active.id === over.id) {
-      setActiveOver({ id: null, pos: "" });
+      setActiveOver({ id: null });
       return;
     }
 
@@ -129,19 +123,19 @@ export function TasksBoardList({}: Props) {
       moveTask({
         currentId: active.id as string,
         dropId: over.id as string,
-        pos: activeOver.pos,
+
         idBoard: idBoard,
       })
     );
 
-    setActiveOver({ id: "", pos: "" });
+    setActiveOver({ id: "" });
   };
 
   return (
     <DndContext
       sensors={sensors}
       collisionDetection={pointerWithin}
-      onDragMove={handleDragMove}
+      // onDragMove={handleDragMove}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
@@ -164,20 +158,19 @@ export function TasksBoardList({}: Props) {
       <DragOverlay dropAnimation={{ ...defaultDropAnimation }}>
         {activeTask ? (
           <div
-            style={{
-              position: "fixed",
-              left: `${mousePosition.x + 13}px`,
-              top: `${mousePosition.y}px`,
-              zIndex: 9999,
-              // Дополнительные стили:
-              width: "200px",
-              backgroundColor: "#36373b",
-              textAlign: "start",
-              padding: "10px",
-              borderRadius: "5px",
-              color: "white",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-            }}
+            style={
+              {
+                // zIndex: 9999,
+                // // Дополнительные стили:
+                // // width: "200px",
+                // backgroundColor: "#36373b",
+                // textAlign: "start",
+                // padding: "10px",
+                // borderRadius: "5px",
+                // color: "white",
+                // boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+              }
+            }
           >
             {activeTask.title}
           </div>
