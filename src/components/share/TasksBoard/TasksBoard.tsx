@@ -10,14 +10,13 @@ import type { ActiveOver } from "../TasksBoardList";
 
 type Props = {
   board: Board;
-  tasks: Task[];
-  isActiveOver: ActiveOver;
+  // tasks: Task[];
 };
 
-export function TasksBoard({ board, tasks, isActiveOver }: Props) {
+export function TasksBoard({ board }: Props) {
   const dispatch = useDispatch();
 
-  const filterTasks = tasks.filter((item) => board.id === item.idBoard);
+  // const filterTasks = tasks.filter((item) => board.id === item.idBoard);
 
   const {
     setNodeRef,
@@ -30,27 +29,29 @@ export function TasksBoard({ board, tasks, isActiveOver }: Props) {
     id: board.id,
     data: {
       type: "Board",
-      tasks: filterTasks,
+      board,
     },
   });
 
+  if (isDragging) {
+    return <div className={style.dragBoard} />;
+  }
+
+  const corStyle = {
+    transition,
+    transform: CSS.Translate.toString(transform),
+  };
+
   return (
     <>
-      <div
-        {...attributes}
-        style={{ transition, transform: CSS.Translate.toString(transform) }}
-        ref={setNodeRef}
-        className={style.board}
-      >
-        <div>
-          <div className={style.header} {...listeners} />
+      <div style={corStyle} ref={setNodeRef} className={style.board}>
+        <div {...attributes} {...listeners} className={style.header}>
           <h2 className={style.subtitle}>{board.title}</h2>
-          <button onClick={() => dispatch(removeList(board.id))}>
-            Удалить доску
-          </button>
-          <TaskList tasks={filterTasks} isActiveOver={isActiveOver} />
-          <TaskForm idBoard={board.id} />
         </div>
+
+        <button onClick={() => dispatch(removeList(board.id))}>
+          Удалить доску
+        </button>
       </div>
     </>
   );

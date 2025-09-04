@@ -12,12 +12,11 @@ import type { ActiveOver } from "../TasksBoardList";
 interface Props {
   className?: string;
   tasks: Task[];
-  isActiveOver: ActiveOver;
 }
 
 type Status = "ALL" | "COMPLETED" | "NOT_COMPLETED";
 
-export function TaskList({ tasks, isActiveOver }: Props) {
+export function TaskList({ tasks }: Props) {
   const status = localStorage.getItem("filterStatus");
   const [filterStatus, setFilterStatus] = useState<Status>(
     status ? JSON.parse(status) : "ALL"
@@ -56,24 +55,16 @@ export function TaskList({ tasks, isActiveOver }: Props) {
       </div> */}
 
       <ul className={style.list}>
-        <SortableContext
-          items={tasksIds}
-          strategy={verticalListSortingStrategy}
-        >
-          {filteredTasks.length ? (
-            filteredTasks.map((task) => (
-              <li
-                key={task.id}
-                data-active-over={isActiveOver.id === task.id}
-                // data-active-pos={isActiveOver.pos}
-                className={style.item}
-              >
-                <TaskItem task={task} />
-              </li>
-            ))
-          ) : (
-            <li className={style.item}></li>
-          )}
+        <SortableContext items={tasksIds}>
+          {filteredTasks.map((task) => (
+            <li
+              key={task.id}
+              // data-active-pos={isActiveOver.pos}
+              className={style.item}
+            >
+              <TaskItem task={task} />
+            </li>
+          ))}
         </SortableContext>
       </ul>
     </div>

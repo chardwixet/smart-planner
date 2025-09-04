@@ -16,11 +16,14 @@ import {
   type UniqueIdentifier,
 } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useMouse } from "@uidotdev/usehooks";
 import { AddBoardForm } from "../AddBoardForm";
 import type { RootState } from "@store/index";
 import { moveTask, type Task } from "@store/slices/taskSlices";
+import { TaskItem } from "../TaskItem";
+import type { Board } from "@store/slices/boardSlices";
+import { createPortal } from "react-dom";
 
 type Props = {};
 export interface ActiveOver {
@@ -28,8 +31,43 @@ export interface ActiveOver {
 }
 
 export function TasksBoardList({}: Props) {
-  const boards = useSelector((state: RootState) => state.boards).lists;
-  const tasks = useSelector((state: RootState) => state.tasks).tasks;
+  // const boards = useSelector((state: RootState) => state.boards).lists;
+  // const tasks = useSelector((state: RootState) => state.tasks).tasks;
+
+  const [boards, setBoards] = useState<Board[]>([
+    {
+      id: "A",
+      title: "Column 1",
+    },
+    {
+      id: "B",
+      title: "Column 2",
+    },
+    {
+      id: "C",
+      title: "Column 3",
+    },
+  ]);
+  // const [tasks, setTasks] = useState<Task[]>([
+  //   {
+  //     id: "1A",
+  //     idBoard: "A",
+  //     title: "ad,sa,f",
+  //     status: false,
+  //   },
+  //   {
+  //     id: "2A",
+  //     idBoard: "A",
+  //     title: "ad,sa,f",
+  //     status: false,
+  //   },
+  //   {
+  //     id: "3A",
+  //     idBoard: "A",
+  //     title: "ad,sa,f",
+  //     status: false,
+  //   },
+  // ]);
 
   const dispatch = useDispatch();
   const itemRef = useRef(null);
@@ -45,137 +83,58 @@ export function TasksBoardList({}: Props) {
     },
   });
 
+  const boardId = useMemo(() => boards.map((board) => board.id), [boards]);
+
   const sensors = useSensors(mouseSensor, touchSensor);
+  // const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [activeBoard, setActiveBoard] = useState<Board | null>(null);
 
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
-  const [activeOver, setActiveOver] = useState<ActiveOver>({
-    id: "",
-  });
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  // const [mouseState] = useMouse();
-
-  const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event;
-
-    const activatorEvent = event.activatorEvent as MouseEvent;
-
-    setMousePosition({
-      x: activatorEvent.clientX,
-      y: activatorEvent.clientY,
-    });
-
-    if (active.data.current?.type === "task") {
-      setActiveTask(active.data.current.task);
-      return;
-    }
-  };
-
-  const handleDragMove = (event: DragMoveEvent) => {
-    const { over } = event;
-    const rect = over?.rect || 0;
-
-    if (!rect) {
-      setActiveOver({ id: "" });
-    }
-
-    if (rect && over?.data.current?.type === "task") {
-      setActiveOver({ id: over?.id || "" });
-    }
-
-    if (over?.data.current?.type === "Board") {
-      const tasks = over.data.current.tasks;
-      const last = tasks.length - 1;
-
-      setActiveOver({
-        id: tasks[last].id,
-      });
-      console.log(tasks[last].id);
-    }
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    setActiveTask(null);
-    let idBoard;
-
-    if (!over || active.id === over.id) {
-      setActiveOver({ id: null });
+  const handleDragStart = (e: DragStartEvent) => {
+    if (e.active.data.current?.type === "Board") {
+      setActiveBoard(e.active.data.current.board);
       return;
     }
 
-    if (over.data.current?.type === "task") {
-      console.log(
-        "task start",
-        active.data.current?.task,
-        "task конец",
-        over.data.current?.task
-      );
-      idBoard = over.data.current?.task.idBoard;
-      setActiveTask(over.data.current.task);
-    }
-
-    if (over.data.current?.type === "Board") {
-      idBoard = over.id;
-      setActiveTask(over.data.current.task);
-    }
-
-    dispatch(
-      moveTask({
-        currentId: active.id as string,
-        dropId: over.id as string,
-
-        idBoard: idBoard,
-      })
-    );
-
-    setActiveOver({ id: "" });
+    // if (e.active.data.current?.type === "Task") {
+    //   setActiveTask(e.active.data.current.task);
+    //   return;
+    // }
   };
+
+  // const handleDragEnd = (event: DragEndEvent) => {
+  //   const { active, over } = event;
+  //   // setActiveTask(null);
+  //   let idBoard;
+
+  //   if (!over || active.id === over.id) {
+  //     return;
+  //   }
+
+  //   idBoard = over.id;
+  // };
 
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={pointerWithin}
       // onDragMove={handleDragMove}
       onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
+      // onDragEnd={handleDragEnd}
     >
-      <SortableContext items={boards.map((i) => i.id)}>
-        <ul className={style.list}>
-          {boards &&
-            boards.map((board) => (
-              <li key={board.id} ref={itemRef} className={style.backgroundItem}>
-                <TasksBoard
-                  board={board}
-                  tasks={tasks}
-                  isActiveOver={activeOver}
-                />
-              </li>
-            ))}
-          <AddBoardForm />
-        </ul>
-      </SortableContext>
-
-      <DragOverlay dropAnimation={{ ...defaultDropAnimation }}>
-        {activeTask ? (
-          <div
-            style={
-              {
-                // zIndex: 9999,
-                // // Дополнительные стили:
-                // // width: "200px",
-                // backgroundColor: "#36373b",
-                // textAlign: "start",
-                // padding: "10px",
-                // borderRadius: "5px",
-                // color: "white",
-                // boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-              }
-            }
-          >
-            {activeTask.title}
-          </div>
-        ) : null}
-      </DragOverlay>
+      <div className={style.list}>
+        <SortableContext items={boardId}>
+          {boards.map((board) => (
+            <TasksBoard key={board.id} board={board} />
+          ))}
+        </SortableContext>
+      </div>
+      <AddBoardForm />
+      {createPortal(
+        <DragOverlay>
+          {activeBoard && <TasksBoard board={activeBoard} />}
+          {/* {activeTask && <TaskItem task={activeTask} />} */}
+        </DragOverlay>,
+        document.body
+      )}
     </DndContext>
   );
 }

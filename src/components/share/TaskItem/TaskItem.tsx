@@ -38,10 +38,14 @@ export function TaskItem({ task }: Props) {
   } = useSortable({
     id: task.id,
     data: {
-      type: "task",
+      type: "Task",
       task,
     },
   });
+
+  if (isDragging) {
+    return <div className={style.dragTask} />;
+  }
 
   const styles = {
     transition,
